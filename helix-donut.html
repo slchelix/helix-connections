@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helix Connections</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f4f5f9; color: #2d2d2d; min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #3f4c77; padding: 18px 32px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    .logo {
+      width: 38px; height: 38px; background: #f45b83; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 18px; color: #fff; flex-shrink: 0;
+    }
+
+    .brand h1 { color: #fff; font-size: 20px; font-weight: 700; }
+    .brand p  { color: rgba(255,255,255,0.55); font-size: 12px; margin-top: 1px; }
+
+    .header-badge {
+      background: rgba(244,91,131,0.2); color: #f45b83;
+      border: 1px solid rgba(244,91,131,0.4);
+      font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px;
+    }
+
+    /* ── Tab Nav ── */
+    .tab-nav {
+      background: #fff;
+      border-bottom: 2px solid #e8eaf2;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .tab-nav-inner {
+      max-width: 1300px; margin: 0 auto;
+      padding: 0 32px;
+      display: flex; gap: 4px;
+    }
+
+    .tab-btn {
+      padding: 14px 22px;
+      background: none; border: none; border-bottom: 3px solid transparent;
+      font-size: 14px; font-weight: 600; color: #aaa;
+      cursor: pointer; transition: color 0.15s, border-color 0.15s;
+      margin-bottom: -2px; display: flex; align-items: center; gap: 6px;
+    }
+
+    .tab-btn:hover { color: #3f4c77; }
+
+    .tab-btn.active {
+      color: #3f4c77;
+      border-bottom-color: #f45b83;
+    }
+
+    /* ═══════════════════════════════════════
+       HOME TAB
+    ═══════════════════════════════════════ */
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(160deg, #eef0f8 0%, #fdf0f5 100%);
+      padding: 72px 32px 56px; text-align: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      background: #fdeef3; color: #f45b83;
+      border: 1px solid rgba(244,91,131,0.3);
+      font-size: 11px; font-weight: 700;
+      padding: 4px 14px; border-radius: 20px;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero h2 {
+      font-size: 42px; font-weight: 800;
+      color: #3f4c77; line-height: 1.15; margin-bottom: 16px;
+    }
+
+    .hero h2 .pink { color: #f45b83; }
+
+    .hero-sub {
+      font-size: 16px; color: #666; line-height: 1.7;
+      max-width: 520px; margin: 0 auto 32px;
+    }
+
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #f45b83; color: #fff;
+      padding: 14px 32px; border-radius: 12px;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; border: none;
+      box-shadow: 0 6px 20px rgba(244,91,131,0.35);
+      transition: all 0.15s;
+    }
+
+    .hero-cta:hover { background: #e04070; transform: translateY(-2px); }
+    .hero-cta:active { transform: translateY(0); }
+
+    .hero-stats {
+      display: flex; justify-content: center; gap: 48px;
+      margin-top: 52px; padding-top: 40px;
+      border-top: 1px solid rgba(63,76,119,0.12);
+    }
+
+    .hero-stat { text-align: center; }
+    .hero-stat-num { font-size: 30px; font-weight: 800; color: #3f4c77; }
+    .hero-stat-lbl { font-size: 12px; color: #999; margin-top: 3px; }
+
+    /* ── Home content container ── */
+    .home-content {
+      max-width: 900px; margin: 0 auto; padding: 0 32px 72px;
+    }
+
+    /* ── Generic home section ── */
+    .home-section { padding: 56px 0; }
+    .home-section + .home-section { border-top: 1px solid #f0f1f6; }
+
+    .section-eyebrow {
+      font-size: 11px; font-weight: 700; color: #f45b83;
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px;
+    }
+
+    .section-h {
+      font-size: 26px; font-weight: 800; color: #3f4c77; margin-bottom: 8px;
+    }
+
+    .section-sub {
+      font-size: 14px; color: #999; line-height: 1.6; margin-bottom: 32px;
+    }
+
+    /* ── How It Works ── */
+    .how-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+    .how-card {
+      background: #fff; border-radius: 14px; padding: 24px;
+      border: 1.5px solid #e8eaf2;
+      display: flex; gap: 16px; align-items: flex-start;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .how-card:hover {
+      border-color: #3f4c77;
+      box-shadow: 0 4px 16px rgba(63,76,119,0.08);
+    }
+
+    .how-icon {
+      width: 48px; height: 48px; border-radius: 12px; background: #eef0f8;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+
+    .how-info h4 { font-size: 14px; font-weight: 700; color: #3f4c77; margin-bottom: 6px; }
+    .how-info p  { font-size: 13px; color: #888; line-height: 1.55; }
+
+    /* ── Sign-up card ── */
+    .signup-card {
+      background: #fff; border-radius: 16px; padding: 32px;
+      border: 1.5px solid #e8eaf2;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+    .form-group label { font-size: 12px; font-weight: 700; color: #3f4c77; }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 10px 12px; border-radius: 8px;
+      border: 1.5px solid #e0e2ed; font-size: 13px; color: #2d2d2d;
+      outline: none; background: #fff; transition: border-color 0.15s;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: #3f4c77; }
+
+    .form-group textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+    .form-divider { height: 1px; background: #f0f1f6; margin: 20px 0; }
+
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .toggle-label { font-size: 13px; font-weight: 600; color: #2d2d2d; }
+    .toggle-sub   { font-size: 11px; color: #aaa; display: block; margin-top: 2px; }
+
+    /* Toggle switch */
+    .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+      position: absolute; inset: 0; background: #ddd;
+      border-radius: 22px; cursor: pointer; transition: background 0.2s;
+    }
+
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #fff; top: 3px; left: 3px;
+      transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    .toggle-switch input:checked + .toggle-slider { background: #3f4c77; }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    .pairing-type-label {
+      font-size: 12px; font-weight: 700; color: #3f4c77;
+      display: block; margin-bottom: 10px;
+    }
+
+    .pairing-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+
+    .check-option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px; border-radius: 8px;
+      border: 1.5px solid #e0e2ed; cursor: pointer;
+      font-size: 12px; font-weight: 600; color: #555;
+      transition: all 0.12s; user-select: none;
+    }
+
+    .check-option:hover { border-color: #3f4c77; background: #fafbff; }
+    .check-option input { accent-color: #f45b83; }
+
+    .signup-submit {
+      width: 100%; padding: 14px;
+      background: #f45b83; border: none; border-radius: 10px;
+      color: #fff; font-size: 14px; font-weight: 700; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(244,91,131,0.3);
+      transition: all 0.15s;
+    }
+
+    .signup-submit:hover { background: #e04070; transform: translateY(-1px); }
+    .signup-submit:active { transform: translateY(0); }
+
+    .form-success {
+      text-align: center; padding: 28px 24px;
+      background: #eef9f3; border-radius: 12px;
+      border: 1.5px solid #a8e0bd;
+    }
+
+    .form-success h4 { color: #1a7a4a; font-size: 17px; margin-bottom: 8px; }
+    .form-success p  { color: #3a9e6a; font-size: 13px; line-height: 1.6; }
+
+    /* ── FAQ ── */
+    .faq-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .faq-item {
+      background: #fff; border-radius: 12px;
+      border: 1.5px solid #e8eaf2; overflow: hidden;
+    }
+
+    .faq-question {
+      width: 100%; padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: none; border: none; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: #3f4c77;
+      text-align: left; transition: background 0.12s; gap: 12px;
+    }
+
+    .faq-question:hover { background: #fafbff; }
+
+    .faq-chevron { color: #f45b83; transition: transform 0.2s; flex-shrink: 0; font-size: 12px; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+    .faq-answer {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.28s ease, padding 0.28s ease;
+      font-size: 13px; color: #666; line-height: 1.7;
+      padding: 0 20px;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 220px;
+      padding: 0 20px 18px;
+    }
+
+    /* ── Ask Admin card ── */
+    .ask-card {
+      background: #fff; border-radius: 16px; padding: 32px;
+      border: 1.5px solid #e8eaf2;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+
+    .ask-submit {
+      padding: 12px 28px; background: #3f4c77;
+      border: none; border-radius: 10px; color: #fff;
+      font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+
+    .ask-submit:hover { background: #2d3a5f; transform: translateY(-1px); }
+    .ask-submit:active { transform: translateY(0); }
+
+    /* ── Contact section ── */
+    .contact-card {
+      background: linear-gradient(135deg, #3f4c77 0%, #2d3a5f 100%);
+      border-radius: 16px; padding: 48px 36px;
+      text-align: center; color: #fff;
+    }
+
+    .contact-card h3 { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+    .contact-card p  { font-size: 14px; opacity: 0.7; line-height: 1.7; margin-bottom: 28px; }
+
+    .contact-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.12); color: #fff;
+      padding: 12px 28px; border-radius: 10px;
+      font-size: 14px; font-weight: 700; text-decoration: none;
+      border: 1.5px solid rgba(255,255,255,0.22);
+      transition: background 0.15s;
+    }
+
+    .contact-link:hover { background: rgba(255,255,255,0.22); }
+
+    /* ═══════════════════════════════════════
+       ADMIN TAB (existing styles)
+    ═══════════════════════════════════════ */
+
+    /* ── Layout ── */
+    main {
+      display: grid; grid-template-columns: 280px 1fr;
+      gap: 24px; padding: 28px 32px 48px;
+      max-width: 1300px; margin: 0 auto;
+    }
+
+    /* ── Roster panel ── */
+    .panel {
+      background: #fff; border-radius: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07); overflow: hidden;
+      align-self: start; position: sticky; top: 54px;
+    }
+
+    .panel-header {
+      background: #3f4c77; padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .panel-header h2 { color: #fff; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
+    .panel-header span { color: rgba(255,255,255,0.5); font-size: 12px; }
+
+    .roster-list { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+
+    .emp-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px; border-radius: 10px;
+      border: 1px solid #f0f1f6; transition: background 0.12s;
+    }
+
+    .emp-card:hover { background: #fafbff; }
+
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+
+    .emp-info { flex: 1; min-width: 0; }
+    .emp-name { font-size: 13px; font-weight: 600; color: #2d2d2d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .emp-dept { font-size: 11px; color: #999; margin-top: 1px; }
+    .emp-tags { display: flex; gap: 4px; flex-shrink: 0; }
+
+    .tag { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .tag-new    { background: #fdeef3; color: #f45b83; }
+    .tag-mentor { background: #eef0f8; color: #3f4c77; }
+
+    /* ── Right panel ── */
+    .right-panel { display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── Mode selector ── */
+    .modes-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+    .mode-card {
+      background: #fff; border-radius: 12px; padding: 16px 14px;
+      border: 2px solid #e8eaf2; cursor: pointer; transition: all 0.15s; text-align: center;
+    }
+
+    .mode-card:hover { border-color: #3f4c77; background: #fafbff; }
+    .mode-card.active { border-color: #3f4c77; background: #3f4c77; }
+    .mode-card.active .mode-icon { background: rgba(255,255,255,0.15); }
+    .mode-card.active .mode-name { color: #fff; }
+    .mode-card.active .mode-desc { color: rgba(255,255,255,0.6); }
+
+    .mode-icon {
+      width: 40px; height: 40px; border-radius: 10px; background: #eef0f8;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; margin: 0 auto 10px;
+    }
+
+    .mode-name { font-size: 12px; font-weight: 700; color: #3f4c77; margin-bottom: 4px; }
+    .mode-desc { font-size: 11px; color: #aaa; line-height: 1.4; }
+
+    /* ── Generate button ── */
+    .generate-btn {
+      width: 100%; padding: 16px; background: #f45b83; border: none; border-radius: 12px;
+      color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 16px rgba(244,91,131,0.35);
+    }
+
+    .generate-btn:hover { background: #e04070; transform: translateY(-1px); }
+    .generate-btn:active { transform: translateY(0); }
+
+    /* ── Results ── */
+    .results-area { display: flex; flex-direction: column; gap: 14px; }
+    .results-header { display: flex; align-items: center; justify-content: space-between; }
+    .results-header h3 { font-size: 14px; font-weight: 700; color: #3f4c77; }
+
+    .results-meta {
+      font-size: 11px; color: #aaa; background: #f4f5f9;
+      border: 1px solid #e2e4ed; border-radius: 20px; padding: 3px 10px;
+    }
+
+    /* ── Notify-All Bar ── */
+    .notify-all-bar {
+      background: #fff; border-radius: 12px; padding: 14px 18px;
+      border: 1.5px solid #e8eaf2;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+
+    .notify-all-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+    .select-all-label {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 13px; font-weight: 600; color: #3f4c77; cursor: pointer; user-select: none;
+    }
+
+    .select-all-label input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: #3f4c77; cursor: pointer; flex-shrink: 0;
+    }
+
+    .pair-count-badge {
+      font-size: 11px; font-weight: 600; color: #888;
+      background: #f4f5f9; border: 1px solid #e2e4ed;
+      border-radius: 20px; padding: 3px 10px;
+    }
+
+    .notify-all-btn {
+      padding: 10px 22px; background: #f45b83; border: none; border-radius: 10px;
+      color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 7px; white-space: nowrap;
+      box-shadow: 0 3px 12px rgba(244,91,131,0.3);
+    }
+
+    .notify-all-btn:hover    { background: #e04070; transform: translateY(-1px); }
+    .notify-all-btn:active   { transform: translateY(0); }
+    .notify-all-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    /* ── Pairs grid ── */
+    .pairs-grid { display: flex; flex-direction: column; gap: 14px; }
+
+    /* ── Pair card ── */
+    .pair-card {
+      background: #fff; border-radius: 14px; padding: 16px;
+      border: 1.5px solid #f0f1f6;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: flex; flex-direction: column;
+      animation: fadeUp 0.3s ease forwards; opacity: 0;
+      transition: border-color 0.15s;
+    }
+
+    .pair-card.unchecked { opacity: 0.5 !important; background: #fafafa; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .pair-top { display: flex; align-items: center; gap: 12px; }
+
+    .pair-cb-wrap { flex-shrink: 0; }
+
+    .pair-cb-wrap input[type="checkbox"] {
+      width: 17px; height: 17px; accent-color: #3f4c77; cursor: pointer;
+    }
+
+    .pair-display { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+
+    .pair-person { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+    .pair-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .pair-name   { font-size: 13px; font-weight: 600; color: #2d2d2d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pair-dept   { font-size: 11px; color: #999; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .pair-connector { display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
+    .pair-icon  { font-size: 18px; }
+    .pair-label { font-size: 9px; font-weight: 700; color: #f45b83; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; }
+
+    /* ── Expanded section ── */
+    .pair-expanded {
+      margin-top: 16px; border-top: 1px solid #f0f1f6; padding-top: 16px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+
+    .section-label {
+      font-size: 10px; font-weight: 700; color: #bbb;
+      text-transform: uppercase; letter-spacing: 0.7px;
+    }
+
+    /* ── Notification bubbles ── */
+    .notif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .chat-bubble {
+      background: #f8f9ff; border-radius: 12px; padding: 14px;
+      border: 1px solid #e4e7f4; display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .bubble-top { display: flex; align-items: center; gap: 8px; }
+
+    .bubble-avatar-sm {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+
+    .bubble-to { font-size: 12px; font-weight: 700; color: #3f4c77; }
+
+    .bubble-body {
+      font-size: 12px; color: #555; line-height: 1.65;
+      background: #fff; border-radius: 8px; padding: 10px 12px;
+      border: 1px solid #eaecf8;
+    }
+
+    .accept-btn {
+      width: 100%; padding: 8px 12px; border-radius: 8px;
+      background: #f45b83; border: none; color: #fff;
+      font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+
+    .accept-btn:hover:not(.accepted) { background: #e04070; }
+
+    .accept-btn.accepted {
+      background: #e6f9ef; color: #1a9453;
+      border: 1.5px solid #b6e8cc; cursor: default;
+    }
+
+    /* ── Schedule area ── */
+    .schedule-area {
+      background: linear-gradient(135deg, #eef8f2, #f0f4fd);
+      border: 1.5px solid #a8d8be; border-radius: 12px; padding: 14px 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+
+    .schedule-msg { font-size: 13px; font-weight: 600; color: #1a7a4a; }
+
+    .schedule-btn {
+      padding: 9px 18px; border-radius: 8px;
+      background: #3f4c77; border: none; color: #fff;
+      font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.15s;
+      display: flex; align-items: center; gap: 6px; white-space: nowrap;
+    }
+
+    .schedule-btn:hover { background: #2d3a5f; }
+
+    /* ── Conversation guide ── */
+    .guide-section {
+      background: #fffbf2; border: 1.5px solid #f0d99a;
+      border-radius: 12px; padding: 14px 16px;
+    }
+
+    .guide-header-row {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+    }
+
+    .guide-title { font-size: 12px; font-weight: 700; color: #3f4c77; }
+
+    .guide-badge {
+      font-size: 10px; font-weight: 700; color: #b37820;
+      background: #fff3cd; border-radius: 20px; padding: 2px 9px;
+      border: 1px solid #f0d99a;
+    }
+
+    .guide-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+    .guide-list li {
+      display: flex; align-items: flex-start; gap: 9px;
+      font-size: 12px; color: #555; line-height: 1.55;
+    }
+
+    .guide-q {
+      background: #3f4c77; color: #fff;
+      font-size: 9px; font-weight: 800; min-width: 18px; height: 18px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      background: #fff; border-radius: 14px; padding: 48px 24px;
+      text-align: center; border: 2px dashed #e8eaf2;
+    }
+
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-state p    { font-size: 14px; color: #aaa; font-weight: 500; }
+    .empty-state span { font-size: 12px; color: #ccc; display: block; margin-top: 4px; }
+
+    /* ── Dept colours ── */
+    .dept-hr          { background: #6b82c4; }
+    .dept-legal       { background: #f45b83; }
+    .dept-finance     { background: #28c76f; }
+    .dept-commercial  { background: #f4a435; }
+    .dept-labops      { background: #9b8fe8; }
+    .dept-engineering { background: #3f4c77; }
+
+    /* ── Footer ── */
+    footer { text-align: center; padding-bottom: 24px; font-size: 12px; color: #ccc; }
+    footer span { color: #f45b83; font-weight: 600; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+      .panel { position: static; }
+      .modes-grid { grid-template-columns: repeat(2, 1fr); }
+      .notif-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .how-grid          { grid-template-columns: 1fr; }
+      .form-row          { grid-template-columns: 1fr; }
+      .pairing-checks    { grid-template-columns: 1fr; }
+      .hero h2           { font-size: 28px; }
+      .hero-stats        { gap: 24px; flex-wrap: wrap; }
+      .home-content      { padding: 0 20px 64px; }
+      .signup-card,
+      .ask-card          { padding: 20px; }
+      .contact-card      { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Header ══ -->
+  <header>
+    <div class="brand">
+      <div class="logo">H</div>
+      <div>
+        <h1>Helix Connections</h1>
+        <p>Employee Coffee Chat Pairing</p>
+      </div>
+    </div>
+    <div class="header-badge">12 Employees</div>
+  </header>
+
+  <!-- ══ Tab Navigation ══ -->
+  <nav class="tab-nav">
+    <div class="tab-nav-inner">
+      <button class="tab-btn active" data-tab="home">🏠 Home</button>
+      <button class="tab-btn" data-tab="admin">⚙️ Admin</button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       HOME TAB
+  ══════════════════════════════════════ -->
+  <div id="tab-home" class="tab-content">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-eyebrow">Helix People &amp; Culture</div>
+      <h2>Better Connections,<br>One Coffee at a Time <span class="pink">☕</span></h2>
+      <p class="hero-sub">Helix Connections pairs you with a colleague for a casual 30-minute coffee chat — building bridges across teams, departments, and career stages.</p>
+      <button class="hero-cta" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})">
+        ✦ Sign Me Up
+      </button>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">12</div>
+          <div class="hero-stat-lbl">Active Employees</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">4</div>
+          <div class="hero-stat-lbl">Pairing Modes</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">30</div>
+          <div class="hero-stat-lbl">Min Coffee Chat</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">∞</div>
+          <div class="hero-stat-lbl">Connections Made</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-content">
+
+      <!-- How It Works -->
+      <div class="home-section" id="how-it-works">
+        <div class="section-eyebrow">How It Works</div>
+        <h2 class="section-h">Four Ways to Connect</h2>
+        <p class="section-sub">Choose the pairing style that fits your goals, or leave it to the admin!</p>
+        <div class="how-grid">
+          <div class="how-card">
+            <div class="how-icon">☕</div>
+            <div class="how-info">
+              <h4>Random Coffee Chat</h4>
+              <p>Surprise pairings across the whole team. Great for meeting someone you've never had a real conversation with.</p>
+            </div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon">🔀</div>
+            <div class="how-info">
+              <h4>Cross-Functional</h4>
+              <p>Always paired with someone from a different department. Build empathy and understand how other teams work.</p>
+            </div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon">🌱</div>
+            <div class="how-info">
+              <h4>New Hire Buddy</h4>
+              <p>New hires get matched with experienced teammates to help them settle in and feel welcome from day one.</p>
+            </div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon">⭐</div>
+            <div class="how-info">
+              <h4>Mentorship</h4>
+              <p>Connect with a mentor or mentee for focused conversations about growth, career paths, and skills development.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign Up -->
+      <div class="home-section" id="signup">
+        <div class="section-eyebrow">Join the Program</div>
+        <h2 class="section-h">Sign Up for Coffee Chats</h2>
+        <p class="section-sub">Fill out your details and we'll add you to the next pairing round.</p>
+        <div class="signup-card">
+          <div id="signup-form-wrap">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="su-name">Full Name</label>
+                <input type="text" id="su-name" placeholder="Your full name">
+              </div>
+              <div class="form-group">
+                <label for="su-dept">Department</label>
+                <select id="su-dept">
+                  <option value="" disabled selected>Select your department</option>
+                  <option>HR</option>
+                  <option>Legal</option>
+                  <option>Finance</option>
+                  <option>Commercial</option>
+                  <option>Lab Operations</option>
+                  <option>Engineering</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-divider"></div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">I'm a New Hire</div>
+                <span class="toggle-sub">Joined Helix in the last 6 months</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="su-newhire">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">I'm open to Mentoring</div>
+                <span class="toggle-sub">Happy to offer guidance and support to others</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="su-mentor">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="form-divider"></div>
+            <label class="pairing-type-label">
+              Preferred Pairing Types
+              <span style="font-weight:400;color:#bbb;margin-left:4px">(select all that apply)</span>
+            </label>
+            <div class="pairing-checks">
+              <label class="check-option">
+                <input type="checkbox" value="random" checked> ☕ Random Coffee Chat
+              </label>
+              <label class="check-option">
+                <input type="checkbox" value="cross" checked> 🔀 Cross-Functional
+              </label>
+              <label class="check-option">
+                <input type="checkbox" value="newhire"> 🌱 New Hire Buddy
+              </label>
+              <label class="check-option">
+                <input type="checkbox" value="mentor"> ⭐ Mentorship
+              </label>
+            </div>
+            <button class="signup-submit" onclick="handleSignup()">✦ Sign Me Up</button>
+          </div>
+          <div id="signup-success" style="display:none" class="form-success">
+            <h4>🎉 You're on the list!</h4>
+            <p>We'll be in touch when the next pairing round kicks off.<br>Keep an eye on your inbox!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="home-section" id="faq">
+        <div class="section-eyebrow">FAQ</div>
+        <h2 class="section-h">Frequently Asked Questions</h2>
+        <p class="section-sub">Everything you need to know about Helix Connections.</p>
+        <div class="faq-list" id="faq-list"></div>
+      </div>
+
+      <!-- Ask the Admin -->
+      <div class="home-section" id="ask-admin">
+        <div class="section-eyebrow">Get in Touch</div>
+        <h2 class="section-h">Ask the Admin</h2>
+        <p class="section-sub">Have a question that's not covered above? Send it directly to the program admin.</p>
+        <div class="ask-card">
+          <div id="ask-form-wrap">
+            <div class="form-row" style="margin-bottom:16px">
+              <div class="form-group">
+                <label for="ask-name">Your Name</label>
+                <input type="text" id="ask-name" placeholder="Your full name">
+              </div>
+              <div class="form-group">
+                <label for="ask-email">Your Email</label>
+                <input type="email" id="ask-email" placeholder="you@helix.com">
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:20px">
+              <label for="ask-question">Your Question</label>
+              <textarea id="ask-question" placeholder="What's on your mind?"></textarea>
+            </div>
+            <button class="ask-submit" onclick="handleAsk()">📨 Send Question</button>
+          </div>
+          <div id="ask-success" style="display:none" class="form-success">
+            <h4>✉ Message received!</h4>
+            <p>Thanks for reaching out. The admin will get back to you within 1–2 business days.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="home-section" id="contact">
+        <div class="contact-card">
+          <h3>Still have questions?</h3>
+          <p>Reach out directly to the Helix People &amp; Culture team.<br>We're always happy to help.</p>
+          <a href="mailto:people@helix.com" class="contact-link">✉ people@helix.com</a>
+        </div>
+      </div>
+
+    </div><!-- /home-content -->
+  </div><!-- /tab-home -->
+
+  <!-- ══════════════════════════════════════
+       ADMIN TAB
+  ══════════════════════════════════════ -->
+  <div id="tab-admin" class="tab-content" style="display:none">
+    <main>
+
+      <!-- Roster -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Employee Roster</h2>
+          <span>12 people</span>
+        </div>
+        <div class="roster-list" id="roster"></div>
+      </div>
+
+      <!-- Right Panel -->
+      <div class="right-panel">
+
+        <div class="modes-grid" id="modes">
+          <div class="mode-card active" data-mode="random">
+            <div class="mode-icon">☕</div>
+            <div class="mode-name">Random Coffee Chat</div>
+            <div class="mode-desc">Surprise pairings across the whole team</div>
+          </div>
+          <div class="mode-card" data-mode="cross">
+            <div class="mode-icon">🔀</div>
+            <div class="mode-name">Cross-Functional</div>
+            <div class="mode-desc">Always pair people from different departments</div>
+          </div>
+          <div class="mode-card" data-mode="newhire">
+            <div class="mode-icon">🌱</div>
+            <div class="mode-name">New Hire Buddy</div>
+            <div class="mode-desc">Connect new hires with experienced teammates</div>
+          </div>
+          <div class="mode-card" data-mode="mentor">
+            <div class="mode-icon">⭐</div>
+            <div class="mode-name">Mentorship</div>
+            <div class="mode-desc">Pair mentors with employees seeking guidance</div>
+          </div>
+        </div>
+
+        <button class="generate-btn" id="gen-btn">
+          <span>✦</span> Generate Pairs
+        </button>
+
+        <div id="results-container">
+          <div class="empty-state">
+            <div class="empty-icon">☕</div>
+            <p>No pairs generated yet</p>
+            <span>Select a mode above and hit Generate Pairs</span>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div><!-- /tab-admin -->
+
+  <footer>Helix Connections &mdash; Built with <span>&hearts;</span> by the Helix Team</footer>
+
+  <script>
+    // ─────────────────────────────────────────────
+    // Data
+    // ─────────────────────────────────────────────
+    const EMPLOYEES = [
+      { id:  1, name: 'Maya Chen',       dept: 'HR',             newHire: false, mentor: true  },
+      { id:  2, name: 'Jordan Williams', dept: 'HR',             newHire: true,  mentor: false },
+      { id:  3, name: 'Priya Patel',     dept: 'Legal',          newHire: false, mentor: true  },
+      { id:  4, name: 'Tyler Brooks',    dept: 'Legal',          newHire: true,  mentor: false },
+      { id:  5, name: 'Sam Rivera',      dept: 'Finance',        newHire: false, mentor: false },
+      { id:  6, name: 'Aisha Johnson',   dept: 'Finance',        newHire: false, mentor: true  },
+      { id:  7, name: 'Marcus Lee',      dept: 'Commercial',     newHire: false, mentor: true  },
+      { id:  8, name: 'Sofia Martinez',  dept: 'Commercial',     newHire: true,  mentor: false },
+      { id:  9, name: 'David Kim',       dept: 'Lab Operations', newHire: false, mentor: false },
+      { id: 10, name: 'Natalie Torres',  dept: 'Lab Operations', newHire: true,  mentor: true  },
+      { id: 11, name: 'James O\'Brien',  dept: 'Engineering',    newHire: false, mentor: true  },
+      { id: 12, name: 'Elena Vasquez',   dept: 'Engineering',    newHire: true,  mentor: false },
+    ];
+
+    const DEPT_CLASS = {
+      'HR': 'dept-hr', 'Legal': 'dept-legal', 'Finance': 'dept-finance',
+      'Commercial': 'dept-commercial', 'Lab Operations': 'dept-labops', 'Engineering': 'dept-engineering',
+    };
+
+    const MODE_LABELS = {
+      random: 'Random Coffee Chat', cross: 'Cross-Functional',
+      newhire: 'New Hire Buddy',    mentor: 'Mentorship',
+    };
+
+    const GUIDE_QUESTIONS = {
+      random: [
+        "What's something you're working on right now that you're excited about?",
+        "If you could instantly master any new skill, what would it be?",
+        "What's the best piece of advice you've received at Helix so far?",
+      ],
+      cross: [
+        "What does a typical day look like in your department?",
+        "What's the biggest challenge your team is currently solving?",
+        "What's one thing you wish other teams understood better about your work?",
+      ],
+      newhire: [
+        "What's been the most surprising thing about working at Helix so far?",
+        "Is there anyone else here you think I should meet?",
+        "What do you wish you'd known in your first 90 days?",
+      ],
+      mentor: [
+        "What skills do you think are most valuable to develop right now?",
+        "What does career growth look like for someone in my role?",
+        "What's one thing you'd do differently if you were starting your career over?",
+      ],
+    };
+
+    const INTROS = {
+      random:  (name, partner, dept) =>
+        `Hi ${name}! ☕ You've been paired with ${partner} from ${dept} for a Helix Connections coffee chat. This is a great chance to connect with someone you might not work with every day. We hope you enjoy the conversation!`,
+      cross:   (name, partner, dept) =>
+        `Hi ${name}! 🔀 You've been matched with ${partner} from ${dept} for a cross-functional coffee chat. Learn how another team works and share what you're up to — great connections start here.`,
+      newhire: (name, partner, dept) =>
+        `Hi ${name}! 🌱 You've been matched with ${partner} from ${dept} as part of the New Hire Buddy program. Whether you're just getting started or helping someone settle in, this is your chance to connect.`,
+      mentor:  (name, partner, dept) =>
+        `Hi ${name}! ⭐ You've been matched with ${partner} from ${dept} for a mentorship coffee chat. We think you'll have a fantastic conversation about growth and career development at Helix.`,
+    };
+
+    // ─────────────────────────────────────────────
+    // FAQ data
+    // ─────────────────────────────────────────────
+    const FAQS = [
+      {
+        q: "What is Helix Connections?",
+        a: "Helix Connections is an internal coffee chat program that pairs Helix employees for 30-minute virtual or in-person meetups. It's a simple way to build relationships across the company beyond your immediate team.",
+      },
+      {
+        q: "How are pairs selected?",
+        a: "Pairs are generated by the program admin using one of four matching modes: Random, Cross-Functional, New Hire Buddy, or Mentorship. The mode used will be described in your notification message.",
+      },
+      {
+        q: "How often does pairing happen?",
+        a: "Pairing rounds typically run monthly. You'll receive a notification when you've been matched, and you have flexibility to schedule the chat at a time that works for both of you.",
+      },
+      {
+        q: "What if I don't know what to say?",
+        a: "Every coffee chat comes with a conversation guide — a set of 3 suggested questions tailored to your pairing type. They're included in your calendar invite so you're never stuck for something to talk about.",
+      },
+      {
+        q: "Can I opt out of a round?",
+        a: "Yes! If you're too busy during a particular round, just let the admin know and you can be skipped for that cycle. There's no obligation to participate every round.",
+      },
+      {
+        q: "Can I request a specific pairing type?",
+        a: "Absolutely. When you sign up, you can indicate your preferred pairing types and we'll do our best to match you accordingly. You can update your preferences any time by re-submitting the sign-up form.",
+      },
+    ];
+
+    // ─────────────────────────────────────────────
+    // Helpers
+    // ─────────────────────────────────────────────
+    function initials(name) {
+      return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    let activeMode   = 'random';
+    let currentPairs = [];
+    let pairState    = [];
+
+    function nextBusinessDay() {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+      return d;
+    }
+
+    function fmtCal(d) {
+      const p = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}T${p(d.getHours())}${p(d.getMinutes())}00`;
+    }
+
+    // ─────────────────────────────────────────────
+    // Roster
+    // ─────────────────────────────────────────────
+    function renderRoster() {
+      document.getElementById('roster').innerHTML = EMPLOYEES.map(e => `
+        <div class="emp-card">
+          <div class="avatar ${DEPT_CLASS[e.dept]}">${initials(e.name)}</div>
+          <div class="emp-info">
+            <div class="emp-name">${e.name}</div>
+            <div class="emp-dept">${e.dept}</div>
+          </div>
+          <div class="emp-tags">
+            ${e.newHire ? '<span class="tag tag-new">New</span>' : ''}
+            ${e.mentor  ? '<span class="tag tag-mentor">Mentor</span>' : ''}
+          </div>
+        </div>`).join('');
+    }
+
+    // ─────────────────────────────────────────────
+    // FAQ
+    // ─────────────────────────────────────────────
+    function renderFaq() {
+      document.getElementById('faq-list').innerHTML = FAQS.map((item, i) => `
+        <div class="faq-item" id="faq-${i}">
+          <button class="faq-question" onclick="toggleFaq(${i})">
+            <span>${item.q}</span>
+            <span class="faq-chevron">▾</span>
+          </button>
+          <div class="faq-answer">${item.a}</div>
+        </div>`).join('');
+    }
+
+    function toggleFaq(i) {
+      const item   = document.getElementById(`faq-${i}`);
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(f => f.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+
+    // ─────────────────────────────────────────────
+    // Sign-up & Ask Admin form handlers
+    // ─────────────────────────────────────────────
+    function handleSignup() {
+      const name = document.getElementById('su-name').value.trim();
+      const dept = document.getElementById('su-dept').value;
+      if (!name || !dept) {
+        alert('Please fill in your name and select your department.');
+        return;
+      }
+      document.getElementById('signup-form-wrap').style.display = 'none';
+      document.getElementById('signup-success').style.display   = 'block';
+    }
+
+    function handleAsk() {
+      const name  = document.getElementById('ask-name').value.trim();
+      const email = document.getElementById('ask-email').value.trim();
+      const q     = document.getElementById('ask-question').value.trim();
+      if (!name || !email || !q) {
+        alert('Please fill in all fields before sending.');
+        return;
+      }
+      document.getElementById('ask-form-wrap').style.display = 'none';
+      document.getElementById('ask-success').style.display   = 'block';
+    }
+
+    // ─────────────────────────────────────────────
+    // Pairing algorithms
+    // ─────────────────────────────────────────────
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function toPairs(arr) {
+      const pairs = [];
+      for (let i = 0; i + 1 < arr.length; i += 2) pairs.push([arr[i], arr[i + 1]]);
+      if (arr.length % 2 !== 0) pairs[pairs.length - 1].push(arr[arr.length - 1]);
+      return pairs;
+    }
+
+    function pairRandom()  { return toPairs(shuffle(EMPLOYEES)); }
+
+    function pairCross() {
+      let arr = shuffle(EMPLOYEES);
+      for (let t = 0; t < 50; t++) {
+        let clean = true;
+        for (let i = 0; i + 1 < arr.length; i += 2) {
+          if (arr[i].dept === arr[i + 1].dept) {
+            clean = false;
+            for (let j = i + 2; j < arr.length; j++) {
+              if (arr[j].dept !== arr[i].dept) {
+                const buddy = j % 2 === 0 ? arr[j + 1] : arr[j - 1];
+                if (!buddy || buddy.dept !== arr[i + 1].dept) {
+                  [arr[i + 1], arr[j]] = [arr[j], arr[i + 1]]; break;
+                }
+              }
+            }
+          }
+        }
+        if (clean) break;
+      }
+      return toPairs(arr);
+    }
+
+    function pairNewHireBuddy() {
+      const newHires = shuffle(EMPLOYEES.filter(e => e.newHire));
+      const vets     = shuffle(EMPLOYEES.filter(e => !e.newHire));
+      const pairs    = [];
+      const min      = Math.min(newHires.length, vets.length);
+      for (let i = 0; i < min; i++) pairs.push([newHires[i], vets[i]]);
+      const left = [...newHires.slice(min), ...vets.slice(min)];
+      for (let i = 0; i + 1 < left.length; i += 2) pairs.push([left[i], left[i + 1]]);
+      return pairs;
+    }
+
+    function pairMentorship() {
+      const mentors = shuffle(EMPLOYEES.filter(e => e.mentor));
+      const mentees = shuffle(EMPLOYEES.filter(e => !e.mentor));
+      const pairs   = [];
+      const min     = Math.min(mentors.length, mentees.length);
+      for (let i = 0; i < min; i++) pairs.push([mentors[i], mentees[i]]);
+      const left = [...mentors.slice(min), ...mentees.slice(min)];
+      for (let i = 0; i + 1 < left.length; i += 2) pairs.push([left[i], left[i + 1]]);
+      return pairs;
+    }
+
+    const GENERATORS = { random: pairRandom, cross: pairCross, newhire: pairNewHireBuddy, mentor: pairMentorship };
+
+    // ─────────────────────────────────────────────
+    // Render helpers
+    // ─────────────────────────────────────────────
+    function personHTML(p) {
+      return `
+        <div class="pair-person">
+          <div class="pair-avatar ${DEPT_CLASS[p.dept]}">${initials(p.name)}</div>
+          <div>
+            <div class="pair-name">${p.name}</div>
+            <div class="pair-dept">${p.dept}</div>
+          </div>
+        </div>`;
+    }
+
+    function bubbleHTML(pairIdx, personIdx, person, partner) {
+      const msg = INTROS[activeMode](person.name, partner.name, partner.dept);
+      return `
+        <div class="chat-bubble">
+          <div class="bubble-top">
+            <div class="bubble-avatar-sm ${DEPT_CLASS[person.dept]}">${initials(person.name)}</div>
+            <div class="bubble-to">To: ${person.name}</div>
+          </div>
+          <div class="bubble-body">${msg}</div>
+          <button class="accept-btn" id="accept-${pairIdx}-${personIdx}"
+            onclick="acceptMatch(${pairIdx}, ${personIdx})">
+            ✉ Accept Match
+          </button>
+        </div>`;
+    }
+
+    function guideHTML() {
+      const qs = GUIDE_QUESTIONS[activeMode];
+      return `
+        <div class="guide-section">
+          <div class="guide-header-row">
+            <span class="guide-title">💬 Conversation Guide</span>
+            <span class="guide-badge">${MODE_LABELS[activeMode]}</span>
+          </div>
+          <ol class="guide-list">
+            ${qs.map(q => `<li><span class="guide-q">Q</span>${q}</li>`).join('')}
+          </ol>
+        </div>`;
+    }
+
+    function pairCardHTML(pair, i) {
+      const label = MODE_LABELS[activeMode];
+      return `
+        <div class="pair-card" id="pair-${i}" style="animation-delay:${i * 0.06}s">
+          <div class="pair-top">
+            <div class="pair-cb-wrap">
+              <input type="checkbox" class="pair-checkbox" id="cb-${i}" checked
+                onchange="onCheckboxChange(${i}, this.checked)">
+            </div>
+            <div class="pair-display">
+              ${personHTML(pair[0])}
+              <div class="pair-connector">
+                <span class="pair-icon">☕</span>
+                <span class="pair-label">${label}</span>
+              </div>
+              ${personHTML(pair[1])}
+              ${pair[2] ? `<div class="pair-connector"><span style="font-size:11px;color:#ccc">+1</span></div>${personHTML(pair[2])}` : ''}
+            </div>
+          </div>
+
+          <div class="pair-expanded" id="expanded-${i}" style="display:none">
+            <div class="section-label">Simulated Notifications</div>
+            <div class="notif-grid">
+              ${bubbleHTML(i, 0, pair[0], pair[1])}
+              ${bubbleHTML(i, 1, pair[1], pair[0])}
+            </div>
+            <div class="schedule-area" id="schedule-${i}" style="display:none">
+              <span class="schedule-msg">🎉 Both accepted! Time to schedule your coffee chat.</span>
+              <button class="schedule-btn" onclick="scheduleMeeting(${i})">
+                📅 Open Google Calendar
+              </button>
+            </div>
+            ${guideHTML()}
+          </div>
+        </div>`;
+    }
+
+    // ─────────────────────────────────────────────
+    // Render pairs
+    // ─────────────────────────────────────────────
+    function renderPairs(pairs) {
+      currentPairs = pairs;
+      pairState    = pairs.map(() => ({ accepted: [false, false] }));
+
+      const label     = MODE_LABELS[activeMode];
+      const container = document.getElementById('results-container');
+
+      container.innerHTML = `
+        <div class="results-area">
+          <div class="results-header">
+            <h3>Generated Pairs</h3>
+            <span class="results-meta">${pairs.length} pairs &middot; ${label}</span>
+          </div>
+
+          <div class="notify-all-bar">
+            <div class="notify-all-left">
+              <label class="select-all-label">
+                <input type="checkbox" id="select-all-cb" checked onchange="toggleSelectAll(this.checked)">
+                Select all
+              </label>
+              <span class="pair-count-badge" id="pair-count-badge">${pairs.length} of ${pairs.length} pairs selected</span>
+            </div>
+            <button class="notify-all-btn" id="notify-all-btn" onclick="notifyAllSelected()">
+              📨 Notify All Selected Pairs
+            </button>
+          </div>
+
+          <div class="pairs-grid">
+            ${pairs.map((pair, i) => pairCardHTML(pair, i)).join('')}
+          </div>
+        </div>`;
+    }
+
+    // ─────────────────────────────────────────────
+    // Checkbox logic
+    // ─────────────────────────────────────────────
+    function onCheckboxChange(idx, checked) {
+      const card = document.getElementById(`pair-${idx}`);
+      card.classList.toggle('unchecked', !checked);
+      updateSelectAllState();
+      updateCountBadge();
+    }
+
+    function toggleSelectAll(checked) {
+      document.querySelectorAll('.pair-checkbox').forEach((cb, i) => {
+        cb.checked = checked;
+        document.getElementById(`pair-${i}`).classList.toggle('unchecked', !checked);
+      });
+      updateCountBadge();
+    }
+
+    function updateSelectAllState() {
+      const all  = document.querySelectorAll('.pair-checkbox');
+      const on   = [...all].filter(cb => cb.checked).length;
+      const saCb = document.getElementById('select-all-cb');
+      if (saCb) {
+        saCb.checked       = on === all.length;
+        saCb.indeterminate = on > 0 && on < all.length;
+      }
+    }
+
+    function updateCountBadge() {
+      const all   = document.querySelectorAll('.pair-checkbox');
+      const on    = [...all].filter(cb => cb.checked).length;
+      const badge = document.getElementById('pair-count-badge');
+      const btn   = document.getElementById('notify-all-btn');
+      if (badge) badge.textContent = `${on} of ${all.length} pairs selected`;
+      if (btn)   btn.disabled = on === 0;
+    }
+
+    // ─────────────────────────────────────────────
+    // Notify all selected
+    // ─────────────────────────────────────────────
+    function notifyAllSelected() {
+      document.querySelectorAll('.pair-checkbox').forEach((cb, i) => {
+        if (cb.checked) {
+          document.getElementById(`expanded-${i}`).style.display = 'flex';
+        }
+      });
+    }
+
+    // ─────────────────────────────────────────────
+    // Accept match
+    // ─────────────────────────────────────────────
+    function acceptMatch(pairIdx, personIdx) {
+      pairState[pairIdx].accepted[personIdx] = true;
+
+      const btn = document.getElementById(`accept-${pairIdx}-${personIdx}`);
+      btn.textContent = '✓ Accepted';
+      btn.classList.add('accepted');
+      btn.disabled = true;
+
+      if (pairState[pairIdx].accepted[0] && pairState[pairIdx].accepted[1]) {
+        document.getElementById(`schedule-${pairIdx}`).style.display = 'flex';
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // Schedule meeting — Google Calendar URL
+    // ─────────────────────────────────────────────
+    function scheduleMeeting(pairIdx) {
+      const pair  = currentPairs[pairIdx];
+      const name1 = pair[0].name;
+      const name2 = pair[1].name;
+
+      const start = nextBusinessDay();
+      start.setHours(10, 0, 0, 0);
+      const end = new Date(start);
+      end.setMinutes(end.getMinutes() + 30);
+
+      const qs = GUIDE_QUESTIONS[activeMode];
+      const description = [
+        `☕ 30-minute Helix Connections coffee chat`,
+        `Pairing type: ${MODE_LABELS[activeMode]}`,
+        ``,
+        `Participants: ${name1} & ${name2}`,
+        ``,
+        `─────────────────────────`,
+        `💬 Conversation Guide`,
+        `─────────────────────────`,
+        ...qs.map((q, i) => `${i + 1}. ${q}`),
+        ``,
+        `📹 Add Google Meet video conferencing before sending.`,
+        ``,
+        `Arranged via Helix Connections · Feel free to reschedule to a time that works for both of you.`,
+      ].join('\n');
+
+      const title = `Helix Connections Coffee Chat — ${name1} & ${name2}`;
+
+      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE`
+        + `&text=${encodeURIComponent(title)}`
+        + `&dates=${fmtCal(start)}/${fmtCal(end)}`
+        + `&details=${encodeURIComponent(description)}`;
+
+      window.open(url, '_blank');
+    }
+
+    // ─────────────────────────────────────────────
+    // Tab switching
+    // ─────────────────────────────────────────────
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        btn.classList.add('active');
+        document.getElementById(`tab-${tab}`).style.display = '';
+      });
+    });
+
+    // ─────────────────────────────────────────────
+    // Admin event listeners
+    // ─────────────────────────────────────────────
+    document.getElementById('modes').addEventListener('click', e => {
+      const card = e.target.closest('.mode-card');
+      if (!card) return;
+      document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      activeMode = card.dataset.mode;
+    });
+
+    document.getElementById('gen-btn').addEventListener('click', () => {
+      renderPairs(GENERATORS[activeMode]());
+    });
+
+    // ─────────────────────────────────────────────
+    // Init
+    // ─────────────────────────────────────────────
+    renderRoster();
+    renderFaq();
+  </script>
+
+</body>
+</html>
